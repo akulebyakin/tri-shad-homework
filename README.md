@@ -7,11 +7,11 @@ Task:
 1. Compare two XML files and test if them similar.
 2. Use TestNG, Java 8, log4j
  
-##### Logging
+#### Logging
 I use log4j2 with configuration file [log4j2.xml](https://github.com/akulebyakin/tri-shad-homework/blob/master/xml-compare/src/main/resources/log4j2.xml).
 All logs goes to console and to the log file (_logs/output.log_ by default).
 
-##### How to run tests
+#### How to run tests
 1. Set up properties
 
     ```bash
