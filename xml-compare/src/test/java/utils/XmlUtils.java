@@ -18,7 +18,7 @@ public class XmlUtils {
      *
      * @param xmlControlFile File to compare with (Gold Data)
      * @param xmlTestFile    File to compare (Output Data)
-     * @param ignoreNodes    XML node names to ignore while comparing. Can be empty.
+     * @param ignoreNodes    XML node names to ignore during comparing. May be empty.
      * @return <b>true</b> - if xmls are similar, <b>false</b> - if xmls have differences.
      */
     public static Boolean compareTwoXmlFiles(@NonNull File xmlControlFile, @NonNull File xmlTestFile,
