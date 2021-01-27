@@ -17,7 +17,7 @@ All logs goes to console and to the log file (_logs/output.log_ by default).
     ```bash
     gold_data=src/data/gold_data/A.xml
     output_data=src/data/output_data/B.xml
-    ignore_nodes=paratext
+    ignore_nodes=paratext;cite.query
     ```
     
     where
@@ -35,9 +35,15 @@ All logs goes to console and to the log file (_logs/output.log_ by default).
     mvn clean test \
         -Dgold_data=src/data/gold_data/A.xml \
         -Doutput_data=src/data/output_data/B.xml \
-        -Dignore_nodes=paratext
+        -Dignore_nodes=paratext\;cite.query
     ```
+    Note that I use this priority to get properties (from more important to less important)
     
+    1. Environment variables
+    2. System Properties
+    3. Properties from test.properties file
+    
+    If both **test.properties** and **System Properties** have the same value, I use **System property** :)
 2. Run tests using Maven
 
     ```bash

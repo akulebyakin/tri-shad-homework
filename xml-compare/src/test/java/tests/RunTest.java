@@ -26,7 +26,10 @@ public class RunTest {
                 new File(goldDataFileName),
                 new File(outputDataFileName),
                 ignoreNodes);
-        assertThat(hasDifferences).isFalse();
+        assertThat(hasDifferences)
+                .describedAs("Check that these XML files have no differences: %s, %s",
+                        goldDataFileName, outputDataFileName)
+                .isFalse();
     }
 
 }
