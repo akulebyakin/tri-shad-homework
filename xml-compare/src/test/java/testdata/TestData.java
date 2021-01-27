@@ -15,16 +15,21 @@ public class TestData {
     @DataProvider(name = "getXmlFiles")
     public static Object[][] getXmlFiles() {
 
-        Properties props = new Properties();
+        Properties props = new Properties(System.getProperties());
 
         try {
             props.load(new FileInputStream(TEST_PROPERTIES_FILE));
         } catch (IOException e) {
-            log.error("Error while getting file names from file: \"{}\"", TEST_PROPERTIES_FILE, e);
+            log.error("Error while getting test properties from file: {}", TEST_PROPERTIES_FILE, e);
         }
 
+        String goldData = props.getProperty("gold_data", null);
+        String outputData = props.getProperty("output_data", null);
+        String[] ignoreNodes = props.getProperty("ignore_nodes", "").split("([,;])");
+
         return new Object[][]{
-                {props.getProperty("gold_data"), props.getProperty("output_data")}
+                {goldData, outputData, ignoreNodes}
         };
     }
+
 }

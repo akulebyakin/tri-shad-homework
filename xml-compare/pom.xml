@@ -12,7 +12,7 @@
     <artifactId>xml-compare</artifactId>
 
     <properties>
-        <run.classes>**/RunTest.class</run.classes>
+        <run.classes>**/tests.RunTest.class</run.classes>
     </properties>
 
     <dependencies>
