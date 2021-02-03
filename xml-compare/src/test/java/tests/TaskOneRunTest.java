@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Log4j2
 @Listeners(TestNGLogListener.class)
-public class RunTest {
+public class TaskOneRunTest {
 
     @Test(testName = "Compare XMLs",
             dataProviderClass = TestData.class,

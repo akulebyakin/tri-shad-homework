@@ -67,6 +67,11 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -81,5 +86,23 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>task1</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <suiteXml>src/test/resources/suites/task1.xml</suiteXml>
+            </properties>
+        </profile>
+        <profile>
+            <id>task2</id>
+            <properties>
+                <suiteXml>src/test/resources/suites/task2.xml</suiteXml>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
