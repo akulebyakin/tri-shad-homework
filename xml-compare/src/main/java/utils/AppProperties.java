@@ -11,17 +11,19 @@ import java.util.Properties;
 @Log4j2
 public class AppProperties {
 
-    private static final String TEST_PROPERTIES_FILE = "src\\test\\resources\\test.properties";
+    private static final String TEST_PROPERTIES_FILE;
 
-    private static Properties testProps;
-    private static Properties systemProps;
-    private static Map<String, String> envProperties;
+    private static final Properties testProps;
+    private static final Properties systemProps;
+    private static final Map<String, String> envProperties;
 
-    private static Map<String, String> appProps;
+    private static final Map<String, String> appProps;
 
     static {
-
         log.info("Setting up properties");
+
+        TEST_PROPERTIES_FILE = System.getProperty("TEST_PROPERTIES_FILE",
+                "src\\test\\resources\\test.properties");
 
         appProps = new HashMap<>();
         envProperties = System.getenv();
@@ -35,21 +37,22 @@ public class AppProperties {
     }
 
     public static String getProperty(String key, String defaultProperty) {
-
+        log.info("Get property '{}' with default value '{}'", key, defaultProperty);
         if (appProps.containsKey(key)) {
-
+            log.info("Returning property from Application Properties");
             return appProps.get(key);
         } else if (envProperties.containsKey(key)) {
-
+            log.info("Returning property from Environment Variables");
             return envProperties.get(key);
         } else if (systemProps.containsKey(key)) {
-
+            log.info("Returning property from System Properties");
             return systemProps.getProperty(key);
         } else if (testProps.containsKey(key)) {
-
+            log.info("Returning property from properties file '{}'", TEST_PROPERTIES_FILE);
             return testProps.getProperty(key);
         }
 
+        log.info("No property '{}' were found. Returning default value.", key);
         return defaultProperty;
     }
 
@@ -59,7 +62,7 @@ public class AppProperties {
     }
 
     public static void setProperty(String key, String value) {
-
+        log.info("Setting property '{}' to Application Properties", key);
         appProps.put(key, value);
     }
 

@@ -18,6 +18,7 @@ public class ZipUtils {
     public static void extractGoldDataAndOutputData(File zipFile, String goldDataFolder, String outputDataFolder,
                                                     String goldDataRegex, String outputDataRegex) {
 
+        log.info("Start unzipping archive: {}", zipFile);
         try (ZipFile file = new ZipFile(zipFile)) {
             Enumeration<? extends ZipEntry> zipEntries = file.entries();
 
@@ -34,11 +35,12 @@ public class ZipUtils {
                 } else if (fileName.matches(outputDataRegex)) {
                     destinationFolder = outputDataFolder;
                 } else {
-                    log.info("File {} does not match either gold_data ({}) nor output_data ({}). Archive: {}",
+                    log.info("File '{}' does not match either gold_data ({}) nor output_data ({}). Archive: {}",
                             fileName, goldDataRegex, outputDataRegex, zipFile);
                     continue;
                 }
 
+                log.info("Extracting file '{}' to '{}'", fileName, destinationFolder);
                 File unzippedFile = new File(destinationFolder, fileName);
                 unzippedFile.getParentFile().mkdirs();
 
@@ -46,11 +48,11 @@ public class ZipUtils {
                      OutputStream out = new FileOutputStream(unzippedFile)) {
                     IOUtils.copy(in, out);
                 } catch (IOException e) {
-                    log.error("Error while extracting file: {} from archive {}", fileName, zipFile, e);
+                    log.error("Error while extracting file '{}' from archive '{}'", fileName, zipFile, e);
                 }
             }
         } catch (IOException e) {
-            log.error("Error while extracting zip archive: {}", zipFile, e);
+            log.error("Error while extracting zip archive '{}'", zipFile, e);
         }
 
     }
