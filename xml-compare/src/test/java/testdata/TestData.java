@@ -17,7 +17,6 @@ public class TestData {
 
     @DataProvider(name = "getXmlFiles")
     public static Object[][] getXmlFiles() {
-
         String goldData = AppProperties.getProperty("gold_data", null);
         String outputData = AppProperties.getProperty("output_data", null);
         String[] ignoreNodes = AppProperties.getProperty("ignore_nodes", "").split("([,;])");
@@ -29,10 +28,10 @@ public class TestData {
 
     @DataProvider(name = "getXmlFilesFromGoldDataAndOutputDataFolders", parallel = true)
     public static Object[][] getXmlFilesFromGoldDataAndOutputDataFolders() {
-
         String gold_data_folder = AppProperties.getProperty("gold_data_folder");
         String output_data_folder = AppProperties.getProperty("output_data_folder");
-        String[] ignoreNodes = AppProperties.getProperty("ignore_nodes", "").split("([,;])");
+        String[] ignoreNodesDefinitions = AppProperties.getProperty("ignore_nodes_definitions", "").split("([,;])");
+
         try {
             List<String> goldDataFilenames = Files.list(Paths.get(gold_data_folder))
                     .map(p -> p.getFileName().toString())
@@ -60,13 +59,14 @@ public class TestData {
                 String outputData = outputDataNumbers.contains(s)
                         ? output_data_folder + "/" + outputDataFilenames.stream().filter(name -> name.substring(1).equals(s)).findFirst().get()
                         : null;
-                result[counter] = new Object[]{goldData, outputData, ignoreNodes};
+
+                result[counter] = new Object[]{goldData, outputData, ignoreNodesDefinitions};
                 counter++;
 
                 if (goldData != null && outputData == null) {
-                    log.info("Gold data file '{}' has no output data pair", goldData);
+                    log.error("Gold data file '{}' has no output data pair", goldData);
                 } else if (goldData == null && outputData != null) {
-                    log.info("Output data file '{}' has no gold data pair", outputData);
+                    log.error("Output data file '{}' has no gold data pair", outputData);
                 } else {
                     log.info("Gold data file '{}' has paired with output data file '{}'", goldData, outputData);
                 }

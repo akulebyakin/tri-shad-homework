@@ -1,5 +1,6 @@
 package utils;
 
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 
@@ -15,8 +16,11 @@ import java.util.zip.ZipFile;
 @Log4j2
 public class ZipUtils {
 
-    public static void extractGoldDataAndOutputData(File zipFile, String goldDataFolder, String outputDataFolder,
-                                                    String goldDataRegex, String outputDataRegex) {
+    public static void extractGoldDataAndOutputData(@NonNull File zipFile, @NonNull String goldDataFolder,
+                                                    @NonNull String outputDataFolder, @NonNull String goldDataRegex,
+                                                    @NonNull String outputDataRegex) {
+
+        if (!zipFile.exists()) log.error("File '{}' does not exist", zipFile);
 
         log.info("Start unzipping archive: {}", zipFile);
         try (ZipFile file = new ZipFile(zipFile)) {
