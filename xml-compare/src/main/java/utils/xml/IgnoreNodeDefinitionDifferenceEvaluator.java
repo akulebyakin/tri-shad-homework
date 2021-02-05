@@ -33,15 +33,6 @@ public class IgnoreNodeDefinitionDifferenceEvaluator implements DifferenceEvalua
                 return compareNodesValues(controlNode, testNode);
             }
 
-//            Element controlElement = (Element) controlNode.getParentNode();
-//            Element testElement = (Element) testNode.getParentNode();
-//            if (controlElement.getNodeName().equals(nodeParent)) {
-//                final String controlValue = controlElement.getTextContent();
-//                final String testValue = testElement.getTextContent();
-//                if (new BigDecimal(controlValue).compareTo(new BigDecimal(testValue)) == 0) {
-//                    return ComparisonResult.SIMILAR;
-//                }
-//            }
         } else if (controlNode != null && controlNode.getParentNode() instanceof Element
                 && testNode != null && testNode.getParentNode() instanceof Element) {
             if (controlNode.getParentNode().getNodeName().equals(nodeParent)) {

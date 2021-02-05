@@ -68,7 +68,7 @@ Comparison differences goes to file _logs/error.log_
 
     ```bash
     task_two_ignore_nodes_definitions=cite.query
-    task_two_zip_data_file=Files.zip
+    task_two_zip_data_file=../Files.zip
     task_two_gold_data_folder=src/data/gold_data
     task_two_output_data_folder=src/data/output_data
     ```
@@ -84,7 +84,7 @@ Comparison differences goes to file _logs/error.log_
      
     Another way to set up these properties is to pass it through CLI as mentioned above in the task1.
     
-2. Put the ZIP archive with control and test files to the xlm-compare directory 
+2. Put the ZIP archive with control and test files to the root project directory 
 or wherever you want but set __task_two_zip_data_file__ with absolute file path then.
 3. Run tests using Maven
 
