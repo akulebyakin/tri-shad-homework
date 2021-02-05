@@ -20,11 +20,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.function.BinaryOperator;
 
 @Log4j2
 public class XmlUtils {
 
-    private static final Logger errorFileLog = LogManager.getLogger("Error File Log");
+    private static final Logger errorFileLog = LogManager.getLogger("ErrorFile");
 
     /**
      * This method compares two XML files
@@ -45,7 +46,8 @@ public class XmlUtils {
         final Source control = getSourceFromFile(xmlControlFile);
         final Source test = getSourceFromFile(xmlTestFile);
 
-        boolean hasDifferences = compareTwoXmls(control, test, ignoreNodes);
+        BinaryOperator<Object> logDifferenceLambda = getLogDifferenceLambda(xmlControlFile.getName(), xmlTestFile.getName());
+        boolean hasDifferences = compareTwoXmls(control, test, logDifferenceLambda, ignoreNodes);
         if (hasDifferences) {
             log.info("Comparing finished. XMLs have differences.");
         } else {
@@ -55,6 +57,14 @@ public class XmlUtils {
         return hasDifferences;
     }
 
+    /**
+     * This method compares two XML files and ignores nodes definitions
+     *
+     * @param xmlControlFilename    Name of a file to compare with (Gold Data)
+     * @param xmlTestFilename       Name of a file to compare (Output Data)
+     * @param ignoreNodeDefinitions XML node names to ignore during comparing. Only node definitions will be ignored.
+     * @return <b>true</b> - if xmls are similar, <b>false</b> - if xmls have differences.
+     */
     public static Boolean compareTwoXmlFilesWithIgnoreNodesDefinitions(@NonNull String xmlControlFilename,
                                                                        @NonNull String xmlTestFilename,
                                                                        String... ignoreNodeDefinitions)
@@ -71,17 +81,16 @@ public class XmlUtils {
         final Source control = Input.fromDocument(controlDocument).build();
         final Source test = Input.fromDocument(testDocument).build();
 
-//        final Source control = getSourceFromFile(new File(xmlControlFilename));
-//        final Source test = getSourceFromFile(new File(xmlTestFilename));
-
-        return compareTwoXmls(control, test);
+        BinaryOperator<Object> logDifferenceLambda = getLogDifferenceLambda(xmlControlFilename, xmlTestFilename);
+        return compareTwoXmls(control, test, logDifferenceLambda);
     }
 
-    private static Boolean compareTwoXmls(@NonNull Source control, @NonNull Source test, String... ignoreNodes) {
+    private static Boolean compareTwoXmls(@NonNull Source control, @NonNull Source test,
+                                          BinaryOperator<Object> logDifference, String... ignoreNodes) {
 
         Diff diff = DiffBuilder.compare(control).withTest(test)
                 .withNodeFilter(node -> !Arrays.asList(ignoreNodes).contains(node.getNodeName()))
-                .withDifferenceListeners((comparison, comparisonResult) -> log.info("Found a difference: " + comparison))
+                .withDifferenceListeners(logDifference::apply)
                 .checkForIdentical()
                 .ignoreWhitespace()
                 .ignoreComments()
@@ -99,17 +108,15 @@ public class XmlUtils {
     private static Document getDocumentFromFile(@NonNull String filename) throws ParserConfigurationException, SAXException,
             IOException {
 
-//        File file = new File(filename);
-//
-//        if (!file.exists()) log.error("File '{}' does not exist", filename);
+        File file = new File(filename);
+        if (!file.exists()) log.error("File '{}' does not exist", filename);
 
         try {
-            BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename));
+            BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(filename));
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
 
-//            return factory.newDocumentBuilder().parse(file);
-            return factory.newDocumentBuilder().parse(in);
+            return factory.newDocumentBuilder().parse(inputStream);
         } catch (SAXException | IOException | ParserConfigurationException e) {
             log.error("Error while getting XML Document from file '{}'", filename, e);
             throw e;
@@ -121,7 +128,6 @@ public class XmlUtils {
         for (String ignoreNodeDefinition : ignoreNodesDefinitions) {
             NodeList nodeList = document.getElementsByTagName(ignoreNodeDefinition);
             for (int i = 0; i < nodeList.getLength(); i++) {
-                System.out.println("parsing node from nodelist: " + i);
                 Node ignoreNode = nodeList.item(0);
                 Node ignoreNodeValue = ignoreNode.getFirstChild();
                 if (ignoreNode.getParentNode() != null) {
@@ -135,6 +141,15 @@ public class XmlUtils {
         }
 
         return document;
+    }
+
+    private static BinaryOperator<Object> getLogDifferenceLambda(String controlFilename, String testFilename) {
+
+        return ((comparison, comparisonResult) -> {
+            errorFileLog.error("Found a difference between file '{}' and '{}': " + comparison,
+                    controlFilename, testFilename);
+            return null;
+        });
     }
 
 }

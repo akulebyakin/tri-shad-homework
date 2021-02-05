@@ -17,9 +17,9 @@ public class TestData {
 
     @DataProvider(name = "getXmlFiles")
     public static Object[][] getXmlFiles() {
-        String goldData = AppProperties.getProperty("gold_data", null);
-        String outputData = AppProperties.getProperty("output_data", null);
-        String[] ignoreNodes = AppProperties.getProperty("ignore_nodes", "").split("([,;])");
+        String goldData = AppProperties.getProperty("task_one_gold_data", null);
+        String outputData = AppProperties.getProperty("task_one_output_data", null);
+        String[] ignoreNodes = AppProperties.getProperty("task_one_ignore_nodes", "").split("([,;])");
 
         return new Object[][]{
                 {goldData, outputData, ignoreNodes}
@@ -28,9 +28,9 @@ public class TestData {
 
     @DataProvider(name = "getXmlFilesFromGoldDataAndOutputDataFolders", parallel = true)
     public static Object[][] getXmlFilesFromGoldDataAndOutputDataFolders() {
-        String gold_data_folder = AppProperties.getProperty("gold_data_folder");
-        String output_data_folder = AppProperties.getProperty("output_data_folder");
-        String[] ignoreNodesDefinitions = AppProperties.getProperty("ignore_nodes_definitions", "").split("([,;])");
+        String gold_data_folder = AppProperties.getProperty("task_two_gold_data_folder");
+        String output_data_folder = AppProperties.getProperty("task_two_output_data_folder");
+        String[] ignoreNodesDefinitions = AppProperties.getProperty("task_two_ignore_nodes_definitions", "").split("([,;])");
 
         try {
             List<String> goldDataFilenames = Files.list(Paths.get(gold_data_folder))
