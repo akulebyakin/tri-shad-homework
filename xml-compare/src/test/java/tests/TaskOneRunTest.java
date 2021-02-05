@@ -19,7 +19,8 @@ public class TaskOneRunTest {
     @Test(testName = "Compare XMLs",
             dataProviderClass = TestData.class,
             dataProvider = "getXmlFiles")
-    public void testCompareXmls(@NonNull final String goldDataFileName, @NonNull final String outputDataFileName,
+    public void testCompareXmls(@NonNull final String goldDataFileName,
+                                @NonNull final String outputDataFileName,
                                 String[] ignoreNodes) {
 
         Boolean hasDifferences = XmlUtils.compareTwoXmlFilesWithIgnoreNodes(

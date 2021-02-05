@@ -16,11 +16,15 @@ import java.util.zip.ZipFile;
 @Log4j2
 public class ZipUtils {
 
-    public static void extractGoldDataAndOutputData(@NonNull File zipFile, @NonNull String goldDataFolder,
-                                                    @NonNull String outputDataFolder, @NonNull String goldDataRegex,
+    public static void extractGoldDataAndOutputData(@NonNull File zipFile,
+                                                    @NonNull String goldDataFolder,
+                                                    @NonNull String outputDataFolder,
+                                                    @NonNull String goldDataRegex,
                                                     @NonNull String outputDataRegex) {
 
-        if (!zipFile.exists()) log.error("File '{}' does not exist", zipFile);
+        if (!zipFile.exists()) {
+            log.error("File '{}' does not exist", zipFile);
+        }
 
         log.info("Start unzipping archive: {}", zipFile);
         try (ZipFile file = new ZipFile(zipFile)) {
@@ -29,7 +33,9 @@ public class ZipUtils {
             while (zipEntries.hasMoreElements()) {
                 ZipEntry zipEntry = zipEntries.nextElement();
 
-                if (zipEntry.isDirectory()) continue;
+                if (zipEntry.isDirectory()) {
+                    continue;
+                }
 
                 String fileName = zipEntry.getName().substring(zipEntry.getName().lastIndexOf("/") + 1);
 
@@ -39,7 +45,8 @@ public class ZipUtils {
                 } else if (fileName.matches(outputDataRegex)) {
                     destinationFolder = outputDataFolder;
                 } else {
-                    log.info("File '{}' does not match either gold_data ({}) nor output_data ({}). Archive: {}",
+                    log.info("File '{}' does not match either gold_data ({}) "
+                                    + "nor output_data ({}). Archive: {}",
                             fileName, goldDataRegex, outputDataRegex, zipFile);
                     continue;
                 }
@@ -52,7 +59,8 @@ public class ZipUtils {
                      OutputStream out = new FileOutputStream(unzippedFile)) {
                     IOUtils.copy(in, out);
                 } catch (IOException e) {
-                    log.error("Error while extracting file '{}' from archive '{}'", fileName, zipFile, e);
+                    log.error("Error while extracting file '{}' from archive '{}'",
+                            fileName, zipFile, e);
                 }
             }
         } catch (IOException e) {

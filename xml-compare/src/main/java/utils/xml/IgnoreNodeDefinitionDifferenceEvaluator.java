@@ -30,12 +30,14 @@ public class IgnoreNodeDefinitionDifferenceEvaluator implements DifferenceEvalua
         }
         if (controlNode instanceof Element && testNode instanceof Element) {
             if (controlNode.getNodeName().equals(nodeParent)) {
+
                 return compareNodesValues(controlNode, testNode);
             }
 
         } else if (controlNode != null && controlNode.getParentNode() instanceof Element
                 && testNode != null && testNode.getParentNode() instanceof Element) {
             if (controlNode.getParentNode().getNodeName().equals(nodeParent)) {
+
                 return compareNodesValues(controlNode.getParentNode(), testNode.getParentNode());
             }
         }

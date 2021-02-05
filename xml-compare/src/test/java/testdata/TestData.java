@@ -28,15 +28,15 @@ public class TestData {
 
     @DataProvider(name = "getXmlFilesFromGoldDataAndOutputDataFolders", parallel = true)
     public static Object[][] getXmlFilesFromGoldDataAndOutputDataFolders() {
-        String gold_data_folder = AppProperties.getProperty("task_two_gold_data_folder");
-        String output_data_folder = AppProperties.getProperty("task_two_output_data_folder");
+        String goldDataFolder = AppProperties.getProperty("task_two_gold_data_folder");
+        String outputDataFolder = AppProperties.getProperty("task_two_output_data_folder");
         String[] ignoreNodesDefinitions = AppProperties.getProperty("task_two_ignore_nodes_definitions", "").split("([,;])");
 
         try {
-            List<String> goldDataFilenames = Files.list(Paths.get(gold_data_folder))
+            List<String> goldDataFilenames = Files.list(Paths.get(goldDataFolder))
                     .map(p -> p.getFileName().toString())
                     .collect(Collectors.toList());
-            List<String> outputDataFilenames = Files.list(Paths.get(output_data_folder))
+            List<String> outputDataFilenames = Files.list(Paths.get(outputDataFolder))
                     .map(p -> p.getFileName().toString())
                     .collect(Collectors.toList());
 
@@ -54,10 +54,10 @@ public class TestData {
             int counter = 0;
             for (String s : unionData) {
                 String goldData = goldDataNumbers.contains(s)
-                        ? gold_data_folder + "/" + goldDataFilenames.stream().filter(name -> name.substring(1).equals(s)).findFirst().get()
+                        ? goldDataFolder + "/" + goldDataFilenames.stream().filter(name -> name.substring(1).equals(s)).findFirst().get()
                         : null;
                 String outputData = outputDataNumbers.contains(s)
-                        ? output_data_folder + "/" + outputDataFilenames.stream().filter(name -> name.substring(1).equals(s)).findFirst().get()
+                        ? outputDataFolder + "/" + outputDataFilenames.stream().filter(name -> name.substring(1).equals(s)).findFirst().get()
                         : null;
 
                 result[counter] = new Object[]{goldData, outputData, ignoreNodesDefinitions};
@@ -68,14 +68,15 @@ public class TestData {
                 } else if (goldData == null && outputData != null) {
                     log.error("Output data file '{}' has no gold data pair", outputData);
                 } else {
-                    log.info("Gold data file '{}' has paired with output data file '{}'", goldData, outputData);
+                    log.info("Gold data file '{}' has paired with output data file '{}'",
+                            goldData, outputData);
                 }
             }
 
             return result;
         } catch (IOException e) {
-            log.error("Error while getting filenames from folders: {}; {}", gold_data_folder,
-                    output_data_folder, e);
+            log.error("Error while getting filenames from folders: {}; {}", goldDataFolder,
+                    outputDataFolder, e);
         }
 
         return new Object[][]{};

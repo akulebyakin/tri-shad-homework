@@ -24,7 +24,6 @@ public class TaskTwoRunTest {
 
     @BeforeSuite
     public void setUp() {
-
         log.info("Setting up test suite: unzip data file archive");
         String zipDataFile = AppProperties.getProperty("task_two_zip_data_file", null);
 
@@ -36,8 +35,8 @@ public class TaskTwoRunTest {
         File zipFile = new File(zipDataFile);
         String goldData = AppProperties.getProperty("task_two_gold_data_folder");
         String outputDataFolder = AppProperties.getProperty("task_two_output_data_folder");
-        String goldDataRegex = "A\\d?+.xml";
-        String outputDataRegex = "B\\d?+.xml";
+        String goldDataRegex = "A\\d*.xml";
+        String outputDataRegex = "B\\d*.xml";
 
         ZipUtils.extractGoldDataAndOutputData(zipFile, goldData, outputDataFolder, goldDataRegex, outputDataRegex);
     }
@@ -45,10 +44,12 @@ public class TaskTwoRunTest {
     @Test(testName = "Compare Big XMLs",
             dataProviderClass = TestData.class,
             dataProvider = "getXmlFilesFromGoldDataAndOutputDataFolders")
-    public void testCompareBigXmls(@NonNull final String goldDataFileName, @NonNull final String outputDataFileName,
-                                   String[] ignoreNodes) throws ParserConfigurationException, SAXException, IOException {
+    public void testCompareBigXmls(@NonNull final String goldDataFileName,
+                                   @NonNull final String outputDataFileName,
+                                   String[] ignoreNodes)
+            throws ParserConfigurationException, SAXException, IOException {
 
-        Boolean hasDifferences = XmlUtils.compareTwoXmlFilesWithIgnoreNodesDefinitions(
+        Boolean hasDifferences = XmlUtils.compareTwoXmlFilesIgnoreNodesDefinitions(
                 goldDataFileName,
                 outputDataFileName,
                 ignoreNodes);
