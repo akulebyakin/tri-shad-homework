@@ -11,6 +11,8 @@ import org.xml.sax.SAXException;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
+import org.xmlunit.diff.DifferenceEvaluator;
+import org.xmlunit.diff.DifferenceEvaluators;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -49,7 +51,7 @@ public class XmlUtils {
 
         BinaryOperator<Object> logDifferenceLambda =
                 getLogDifferenceLambda(xmlControlFile.getName(), xmlTestFile.getName());
-        boolean hasDifferences = compareTwoXmls(control, test, logDifferenceLambda, ignoreNodes);
+        boolean hasDifferences = compareTwoXmls(control, test, logDifferenceLambda, null, ignoreNodes);
         if (hasDifferences) {
             log.info("Comparing finished. XMLs have differences.");
         } else {
@@ -88,18 +90,24 @@ public class XmlUtils {
         final Source control = Input.fromDocument(controlDocument).build();
         final Source test = Input.fromDocument(testDocument).build();
 
-        BinaryOperator<Object> logDifferenceLambda =
-                getLogDifferenceLambda(controlFilename, testFilename);
-        return compareTwoXmls(control, test, logDifferenceLambda);
+//        final Source control = getSourceFromFile(new File(controlFilename));
+//        final Source test = getSourceFromFile(new File(testFilename));
+
+        BinaryOperator<Object> logDifferenceLambda = getLogDifferenceLambda(controlFilename, testFilename);
+        return compareTwoXmls(control, test, logDifferenceLambda, null);
+//        return compareTwoXmls(control, test, logDifferenceLambda,
+//                new IgnoreNodeDefinitionDifferenceEvaluator("paratext", "cite.query"));
     }
 
     private static Boolean compareTwoXmls(@NonNull Source control, @NonNull Source test,
                                           BinaryOperator<Object> logDifference,
+                                          DifferenceEvaluator differenceEvaluator,
                                           String... ignoreNodes) {
 
         Diff diff = DiffBuilder.compare(control).withTest(test)
                 .withNodeFilter(node -> !Arrays.asList(ignoreNodes).contains(node.getNodeName()))
                 .withDifferenceListeners(logDifference::apply)
+                .withDifferenceEvaluator(differenceEvaluator == null ? DifferenceEvaluators.Default : differenceEvaluator)
                 .checkForIdentical()
                 .ignoreWhitespace()
                 .ignoreComments()

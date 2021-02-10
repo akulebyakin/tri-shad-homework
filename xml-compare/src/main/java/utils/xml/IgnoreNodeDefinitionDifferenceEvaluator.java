@@ -2,8 +2,8 @@ package utils.xml;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
 import org.xmlunit.diff.DifferenceEvaluator;
@@ -11,47 +11,76 @@ import org.xmlunit.diff.DifferenceEvaluator;
 @AllArgsConstructor
 public class IgnoreNodeDefinitionDifferenceEvaluator implements DifferenceEvaluator {
 
-    private final String nodeParent;
-    private final String ignoreChildNodeDefinition;
+    private final String ignoreNodeParentName;
+    private final String ignoreNodeName;
 
     @Override
     public ComparisonResult evaluate(Comparison comparison, ComparisonResult comparisonResult) {
+
         if (comparisonResult.equals(ComparisonResult.EQUAL) || comparisonResult.equals(ComparisonResult.SIMILAR)) {
             return comparisonResult;
         }
+
         final Node testNode = comparison.getTestDetails().getTarget();
         final Node controlNode = comparison.getControlDetails().getTarget();
 
-        if (controlNode != null && testNode == null && controlNode.getParentNode().getNodeName().equals(nodeParent)) {
+        final Node testParentNode = (testNode == null) ? null : testNode.getParentNode();
+        final Node controlParentNode = (controlNode == null) ? null : controlNode.getParentNode();
+
+        // If one of nodes - child of 'paratext' node, then just skip it
+        if ((testParentNode != null && testParentNode.getNodeName().equals(ignoreNodeParentName))
+                || (controlParentNode != null && controlParentNode.getNodeName().equals(ignoreNodeParentName))) {
+
             return ComparisonResult.EQUAL;
         }
-        if (controlNode == null && testNode != null && testNode.getParentNode().getNodeName().equals(nodeParent)) {
-            return ComparisonResult.EQUAL;
+
+        // If both nodes is 'paratext' - change all child 'cite.query' nodes to theirs content and compare
+        if (controlNode != null && controlNode.getNodeName().equals(ignoreNodeParentName)
+                && testNode != null && testNode.getNodeName().equals(ignoreNodeParentName)) {
+            Node newControlNode = removeIgnoredNodeDefinition(controlNode, ignoreNodeName);
+            Node newTestNode = removeIgnoredNodeDefinition(testNode, ignoreNodeName);
+
+            return compareNodesTextContent(newControlNode, newTestNode);
         }
-        if (controlNode instanceof Element && testNode instanceof Element) {
-            if (controlNode.getNodeName().equals(nodeParent)) {
 
-                return compareNodesValues(controlNode, testNode);
-            }
-
-        } else if (controlNode != null && controlNode.getParentNode() instanceof Element
-                && testNode != null && testNode.getParentNode() instanceof Element) {
-            if (controlNode.getParentNode().getNodeName().equals(nodeParent)) {
-
-                return compareNodesValues(controlNode.getParentNode(), testNode.getParentNode());
-            }
-        }
+        // Else just return Comparison Result
         return comparisonResult;
     }
 
-    private ComparisonResult compareNodesValues(@NonNull Node controlNode, @NonNull Node testNode) {
-        String testText = testNode.getTextContent().replaceAll("\\s", "");
-        String controlText = controlNode.getTextContent().replaceAll("\\s", "");
+    private ComparisonResult compareNodesTextContent(@NonNull Node controlNode, @NonNull Node testNode) {
+
+        String testText = testNode.getTextContent();
+        String controlText = controlNode.getTextContent();
+
         if (testText.equals(controlText)) {
+
             return ComparisonResult.EQUAL;
         } else {
+
             return ComparisonResult.DIFFERENT;
         }
+    }
+
+    private Node removeIgnoredNodeDefinition(Node parent, String... ignoreNodesDefinitions) {
+
+        for (String ignoreNodeDefinition : ignoreNodesDefinitions) {
+            NodeList nodeList = parent.getChildNodes();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node ignoreNode = nodeList.item(0);
+                if (ignoreNode.getNodeName().equals(ignoreNodeDefinition)) {
+                    Node ignoreNodeValue = ignoreNode.getFirstChild();
+                    if (ignoreNode.getParentNode() != null) {
+                        if (ignoreNodeValue == null || ignoreNodeValue.getTextContent().isEmpty()) {
+                            ignoreNode.getParentNode().removeChild(ignoreNode);
+                        } else {
+                            ignoreNode.getParentNode().replaceChild(ignoreNodeValue, ignoreNode);
+                        }
+                    }
+                }
+            }
+        }
+
+        return parent;
     }
 
 }
