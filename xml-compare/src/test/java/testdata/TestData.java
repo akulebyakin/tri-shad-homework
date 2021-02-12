@@ -1,6 +1,5 @@
 package testdata;
 
-import exceptions.TestDataException;
 import lombok.extern.log4j.Log4j2;
 import org.testng.annotations.DataProvider;
 import utils.AppProperties;
@@ -16,9 +15,6 @@ import java.util.stream.Collectors;
 @Log4j2
 public class TestData {
 
-    private static final String NO_GOLD_DATA_PAIR_ERR_MSG = "Gold data file '%s' has no output data pair";
-    private static final String NO_OUTPUT_DATA_PAIR_ERR_MSG = "Output data file '%s' has no gold data pair";
-
     @DataProvider(name = "getXmlFiles")
     public static Object[][] getXmlFiles() {
         String goldData = AppProperties.getProperty("task_one_gold_data", null);
@@ -31,7 +27,7 @@ public class TestData {
     }
 
     @DataProvider(name = "getXmlFilesFromGoldDataAndOutputDataFolders", parallel = true)
-    public static Object[][] getXmlFilesFromGoldDataAndOutputDataFolders() throws TestDataException {
+    public static Object[][] getXmlFilesFromGoldDataAndOutputDataFolders() {
         String goldDataFolder = AppProperties.getProperty("task_two_gold_data_folder");
         String outputDataFolder = AppProperties.getProperty("task_two_output_data_folder");
         String[] ignoreNodesDefinitions = AppProperties.getProperty("task_two_ignore_nodes_definitions", "").split("([,;])");
@@ -68,13 +64,9 @@ public class TestData {
                 counter++;
 
                 if (goldData != null && outputData == null) {
-                    String errorMessage = String.format(NO_GOLD_DATA_PAIR_ERR_MSG, goldData);
-                    log.error(errorMessage);
-                    throw new TestDataException(errorMessage);
+                    log.error("Gold data file '{}' has no output data pair", goldData);
                 } else if (goldData == null && outputData != null) {
-                    String errorMessage = String.format(NO_OUTPUT_DATA_PAIR_ERR_MSG, outputData);
-                    log.error(errorMessage);
-                    throw new TestDataException(errorMessage);
+                    log.error("Output data file '{}' has no gold data pair", outputData);
                 } else {
                     log.info("Gold data file '{}' has paired with output data file '{}'",
                             goldData, outputData);

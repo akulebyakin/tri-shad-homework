@@ -1,4 +1,4 @@
-package utils;
+package services.zip;
 
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
@@ -14,7 +14,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 @Log4j2
-public class ZipUtils {
+public class TestDataZipExtractor {
 
     public static void extractGoldDataAndOutputData(@NonNull File zipFile,
                                                     @NonNull String goldDataFolder,
@@ -45,7 +45,7 @@ public class ZipUtils {
                 } else if (fileName.matches(outputDataRegex)) {
                     destinationFolder = outputDataFolder;
                 } else {
-                    log.info("File '{}' does not match either gold_data ({}) "
+                    log.error("File '{}' does not match either gold_data ({}) "
                                     + "nor output_data ({}). Archive: {}",
                             fileName, goldDataRegex, outputDataRegex, zipFile);
                     continue;
@@ -66,7 +66,6 @@ public class ZipUtils {
         } catch (IOException e) {
             log.error("Error while extracting zip archive '{}'", zipFile, e);
         }
-
     }
 
 }

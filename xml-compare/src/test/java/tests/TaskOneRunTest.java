@@ -5,8 +5,8 @@ import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import services.xml.XmlCompare;
 import testdata.TestData;
-import utils.xml.XmlUtils;
 
 import java.io.File;
 
@@ -23,7 +23,7 @@ public class TaskOneRunTest {
                                 @NonNull final String outputDataFileName,
                                 String[] ignoreNodes) {
 
-        Boolean hasDifferences = XmlUtils.compareTwoXmlFilesWithIgnoreNodes(
+        Boolean hasDifferences = XmlCompare.compareTwoXmlFilesWithIgnoreNodes(
                 new File(goldDataFileName),
                 new File(outputDataFileName),
                 ignoreNodes);

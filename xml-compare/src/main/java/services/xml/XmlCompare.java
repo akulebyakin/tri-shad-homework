@@ -1,4 +1,4 @@
-package utils.xml;
+package services.xml;
 
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.function.BinaryOperator;
 
 @Log4j2
-public class XmlUtils {
+public class XmlCompare {
 
     private static final Logger errorFileLog = LogManager.getLogger("ErrorFile");
 
@@ -72,31 +72,30 @@ public class XmlUtils {
      */
     public static Boolean compareTwoXmlFilesIgnoreNodesDefinitions(@NonNull String controlFilename,
                                                                    @NonNull String testFilename,
-                                                                   String... ignoreNodeDefinitions)
-            throws IOException, SAXException, ParserConfigurationException {
+                                                                   String... ignoreNodeDefinitions) {
 
         log.info("Start comparing two XML files.");
         log.info("control file: {}", controlFilename);
         log.info("test file: {}", testFilename);
         log.info("ignore nodes definitions: {}", Arrays.toString(ignoreNodeDefinitions));
 
-        Document controlDocument = removeIgnoredNodeDefinition(
-                getDocumentFromFile(controlFilename), ignoreNodeDefinitions
-        );
-        Document testDocument = removeIgnoredNodeDefinition(
-                getDocumentFromFile(testFilename), ignoreNodeDefinitions
-        );
+//        Document controlDocument = removeIgnoredNodeDefinition(
+//                getDocumentFromFile(controlFilename), ignoreNodeDefinitions
+//        );
+//        Document testDocument = removeIgnoredNodeDefinition(
+//                getDocumentFromFile(testFilename), ignoreNodeDefinitions
+//        );
 
-        final Source control = Input.fromDocument(controlDocument).build();
-        final Source test = Input.fromDocument(testDocument).build();
+//        final Source control = Input.fromDocument(controlDocument).build();
+//        final Source test = Input.fromDocument(testDocument).build();
 
-//        final Source control = getSourceFromFile(new File(controlFilename));
-//        final Source test = getSourceFromFile(new File(testFilename));
+        final Source control = getSourceFromFile(new File(controlFilename));
+        final Source test = getSourceFromFile(new File(testFilename));
 
         BinaryOperator<Object> logDifferenceLambda = getLogDifferenceLambda(controlFilename, testFilename);
-        return compareTwoXmls(control, test, logDifferenceLambda, null);
-//        return compareTwoXmls(control, test, logDifferenceLambda,
-//                new IgnoreNodeDefinitionDifferenceEvaluator("paratext", "cite.query"));
+//        return compareTwoXmls(control, test, logDifferenceLambda, null);
+        return compareTwoXmls(control, test, logDifferenceLambda,
+                new IgnoreNodeDefinitionDifferenceEvaluator(ignoreNodeDefinitions));
     }
 
     private static Boolean compareTwoXmls(@NonNull Source control, @NonNull Source test,
