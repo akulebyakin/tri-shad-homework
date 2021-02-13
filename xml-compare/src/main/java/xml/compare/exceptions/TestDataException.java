@@ -1,4 +1,4 @@
-package exceptions;
+package xml.compare.exceptions;
 
 public class TestDataException extends Exception {
 

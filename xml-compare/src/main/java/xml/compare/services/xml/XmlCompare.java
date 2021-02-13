@@ -1,9 +1,10 @@
-package services.xml;
+package xml.compare.services.xml;
 
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import java.util.function.BinaryOperator;
 
 @Log4j2
+@Service
 public class XmlCompare {
 
     private static final Logger errorFileLog = LogManager.getLogger("ErrorFile");
@@ -37,9 +39,9 @@ public class XmlCompare {
      * @param ignoreNodes    XML node names to ignore during comparing. May be empty.
      * @return <b>true</b> - if xmls are similar, <b>false</b> - if xmls have differences.
      */
-    public static Boolean compareTwoXmlFilesWithIgnoreNodes(@NonNull File xmlControlFile,
-                                                            @NonNull File xmlTestFile,
-                                                            String... ignoreNodes) {
+    public Boolean compareTwoXmlFilesWithIgnoreNodes(@NonNull File xmlControlFile,
+                                                     @NonNull File xmlTestFile,
+                                                     String... ignoreNodes) {
 
         log.info("Start comparing two XML files.");
         log.info("control file: {}", xmlControlFile);
@@ -70,9 +72,9 @@ public class XmlCompare {
      *                              Only node definitions will be ignored.
      * @return <b>true</b> - if xmls are similar, <b>false</b> - if xmls have differences.
      */
-    public static Boolean compareTwoXmlFilesIgnoreNodesDefinitions(@NonNull String controlFilename,
-                                                                   @NonNull String testFilename,
-                                                                   String... ignoreNodeDefinitions) {
+    public Boolean compareTwoXmlFilesIgnoreNodesDefinitions(@NonNull String controlFilename,
+                                                            @NonNull String testFilename,
+                                                            String... ignoreNodeDefinitions) {
 
         log.info("Start comparing two XML files.");
         log.info("control file: {}", controlFilename);
@@ -98,10 +100,10 @@ public class XmlCompare {
                 new IgnoreNodeDefinitionDifferenceEvaluator(ignoreNodeDefinitions));
     }
 
-    private static Boolean compareTwoXmls(@NonNull Source control, @NonNull Source test,
-                                          BinaryOperator<Object> logDifference,
-                                          DifferenceEvaluator differenceEvaluator,
-                                          String... ignoreNodes) {
+    private Boolean compareTwoXmls(@NonNull Source control, @NonNull Source test,
+                                   BinaryOperator<Object> logDifference,
+                                   DifferenceEvaluator differenceEvaluator,
+                                   String... ignoreNodes) {
 
         Diff diff = DiffBuilder.compare(control).withTest(test)
                 .withNodeFilter(node -> !Arrays.asList(ignoreNodes).contains(node.getNodeName()))
@@ -115,7 +117,7 @@ public class XmlCompare {
         return diff.hasDifferences();
     }
 
-    private static Source getSourceFromFile(@NonNull File file) {
+    private Source getSourceFromFile(@NonNull File file) {
         if (!file.exists()) {
             log.error("File '{}' does not exist", file);
         }
@@ -123,7 +125,7 @@ public class XmlCompare {
         return Input.fromFile(file).build();
     }
 
-    private static Document getDocumentFromFile(@NonNull String filename)
+    private Document getDocumentFromFile(@NonNull String filename)
             throws ParserConfigurationException, SAXException, IOException {
 
         File file = new File(filename);
@@ -143,8 +145,8 @@ public class XmlCompare {
         }
     }
 
-    private static Document removeIgnoredNodeDefinition(@NonNull Document document,
-                                                        String... ignoreNodesDefinitions) {
+    private Document removeIgnoredNodeDefinition(@NonNull Document document,
+                                                 String... ignoreNodesDefinitions) {
 
         for (String ignoreNodeDefinition : ignoreNodesDefinitions) {
             NodeList nodeList = document.getElementsByTagName(ignoreNodeDefinition);
@@ -164,8 +166,8 @@ public class XmlCompare {
         return document;
     }
 
-    private static BinaryOperator<Object> getLogDifferenceLambda(String controlFilename,
-                                                                 String testFilename) {
+    private BinaryOperator<Object> getLogDifferenceLambda(String controlFilename,
+                                                          String testFilename) {
 
         return ((comparison, comparisonResult) -> {
             errorFileLog.error("Found a difference between file '{}' and '{}': "

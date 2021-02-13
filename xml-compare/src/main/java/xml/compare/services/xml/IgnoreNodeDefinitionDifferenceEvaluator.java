@@ -1,4 +1,4 @@
-package services.xml;
+package xml.compare.services.xml;
 
 import lombok.NonNull;
 import org.w3c.dom.Node;

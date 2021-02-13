@@ -1,5 +1,6 @@
-package utils;
+package xml.compare.utils;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.FileInputStream;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 
 @Log4j2
+@UtilityClass
 public class AppProperties {
 
     private static final String TEST_PROPERTIES_FILE;

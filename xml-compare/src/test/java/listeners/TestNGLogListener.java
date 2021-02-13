@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
-import utils.MemoryHelper;
+import xml.compare.utils.MemoryHelper;
 
 @Log4j2
 public class TestNGLogListener implements ITestListener {

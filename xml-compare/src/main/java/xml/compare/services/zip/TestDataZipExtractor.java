@@ -1,8 +1,9 @@
-package services.zip;
+package xml.compare.services.zip;
 
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,13 +15,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 @Log4j2
+@Service
 public class TestDataZipExtractor {
 
-    public static void extractGoldDataAndOutputData(@NonNull File zipFile,
-                                                    @NonNull String goldDataFolder,
-                                                    @NonNull String outputDataFolder,
-                                                    @NonNull String goldDataRegex,
-                                                    @NonNull String outputDataRegex) {
+    public void extractGoldDataAndOutputData(@NonNull File zipFile,
+                                             @NonNull String goldDataFolder,
+                                             @NonNull String outputDataFolder,
+                                             @NonNull String goldDataRegex,
+                                             @NonNull String outputDataRegex) {
 
         if (!zipFile.exists()) {
             log.error("File '{}' does not exist", zipFile);

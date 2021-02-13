@@ -2,7 +2,7 @@ package testdata;
 
 import lombok.extern.log4j.Log4j2;
 import org.testng.annotations.DataProvider;
-import utils.AppProperties;
+import xml.compare.utils.AppProperties;
 
 import java.io.IOException;
 import java.nio.file.Files;

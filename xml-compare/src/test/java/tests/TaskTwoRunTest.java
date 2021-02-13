@@ -1,28 +1,35 @@
 package tests;
 
-import exceptions.TestDataException;
-import listeners.TestNGLogListener;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
-import services.xml.XmlCompare;
-import services.zip.TestDataZipExtractor;
 import testdata.TestData;
-import utils.AppProperties;
+import xml.compare.exceptions.TestDataException;
+import xml.compare.services.xml.XmlCompare;
+import xml.compare.services.zip.TestDataZipExtractor;
+import xml.compare.utils.AppProperties;
 
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Log4j2
-@Listeners(TestNGLogListener.class)
-public class TaskTwoRunTest {
+public class TaskTwoRunTest extends AbstractTest {
 
     private static final String NO_GOLD_DATA_PAIR_ERR_MSG = "Gold data file '%s' has no output data pair";
     private static final String NO_OUTPUT_DATA_PAIR_ERR_MSG = "Output data file '%s' has no gold data pair";
 
-    @BeforeSuite
+    @Autowired
+    @Lazy
+    private XmlCompare xmlCompare;
+
+    @Autowired
+    @Lazy
+    private TestDataZipExtractor testDataZipExtractor;
+
+    @BeforeSuite()
     public void setUp() {
         log.info("Setting up test suite: unzip data file archive");
         String zipDataFile = AppProperties.getProperty("task_two_zip_data_file", null);
@@ -35,10 +42,10 @@ public class TaskTwoRunTest {
         File zipFile = new File(zipDataFile);
         String goldData = AppProperties.getProperty("task_two_gold_data_folder");
         String outputDataFolder = AppProperties.getProperty("task_two_output_data_folder");
-        String goldDataRegex = "A\\d*.services.xml";
-        String outputDataRegex = "B\\d*.services.xml";
+        String goldDataRegex = "A\\d*.xml";
+        String outputDataRegex = "B\\d*.xml";
 
-        TestDataZipExtractor.extractGoldDataAndOutputData(zipFile, goldData, outputDataFolder, goldDataRegex, outputDataRegex);
+        testDataZipExtractor.extractGoldDataAndOutputData(zipFile, goldData, outputDataFolder, goldDataRegex, outputDataRegex);
     }
 
     @Test(testName = "Compare Big XMLs",
@@ -56,7 +63,7 @@ public class TaskTwoRunTest {
             throw new TestDataException(errorMessage);
         }
 
-        Boolean hasDifferences = XmlCompare.compareTwoXmlFilesIgnoreNodesDefinitions(
+        Boolean hasDifferences = xmlCompare.compareTwoXmlFilesIgnoreNodesDefinitions(
                 goldDataFileName,
                 outputDataFileName,
                 ignoreNodes);
