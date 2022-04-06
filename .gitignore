@@ -8,3 +8,8 @@ target
 *.iml
 .idea
 etc
+
+*.zip
+
+**/gold_data/*
+**/output_data/*
