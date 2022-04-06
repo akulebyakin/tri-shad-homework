@@ -1,6 +1,7 @@
 package xml.compare.services.xml;
 
 import lombok.NonNull;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xmlunit.diff.Comparison;

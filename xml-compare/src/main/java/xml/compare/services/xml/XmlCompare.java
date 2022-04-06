@@ -97,7 +97,7 @@ public class XmlCompare {
         BinaryOperator<Object> logDifferenceLambda = getLogDifferenceLambda(controlFilename, testFilename);
 //        return compareTwoXmls(control, test, logDifferenceLambda, null);
         return compareTwoXmls(control, test, logDifferenceLambda,
-                new IgnoreNodeDefinitionDifferenceEvaluator(ignoreNodeDefinitions));
+                new TESTIgnoreNodeDefinitionDifferenceEvaluator(ignoreNodeDefinitions), ignoreNodeDefinitions);
     }
 
     private Boolean compareTwoXmls(@NonNull Source control, @NonNull Source test,
